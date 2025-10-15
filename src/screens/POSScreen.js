@@ -15,7 +15,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import { useMenu, useSales, useOrders } from '../hooks';
 import { MenuItem, LoadingSpinner, EmptyState } from '../components/common';
-import { formatCurrency } from '../utils/analytics';
+import { formatCurrency, formatCurrencyCompact } from '../utils/analytics';
 import { spacing } from '../theme/theme';
 
 /**
@@ -231,22 +231,22 @@ const POSScreen = ({ navigation }) => {
       {cartItemCount > 0 && (
         <Card style={[styles.cartBar, { backgroundColor: theme.colors.surface }]} mode="elevated" elevation={4}>
           <Card.Content style={styles.cartContent}>
-            <View style={styles.cartSummary}>
-              <View style={styles.cartInfo}>
-                <MaterialCommunityIcons name="cart" size={24} color={theme.colors.primary} />
+            <View style={[styles.cartSummary, width < 400 && styles.cartSummaryMobile]}>
+              <View style={[styles.cartInfo, width < 400 && styles.cartInfoMobile]}>
+                <MaterialCommunityIcons name="cart" size={width < 400 ? 20 : 24} color={theme.colors.primary} />
                 <View style={styles.cartDetails}>
                   <Text variant="bodySmall" style={styles.cartLabel}>
-                    Total Amount
+                    {width < 400 ? 'Total' : 'Total Amount'}
                   </Text>
-                  <Text variant="headlineSmall" style={[styles.cartTotal, { color: theme.colors.primary }]}>
-                    {formatCurrency(cartTotal)}
+                  <Text variant={width < 400 ? "titleMedium" : "headlineSmall"} style={[styles.cartTotal, { color: theme.colors.primary }]}>
+                    {width < 400 ? formatCurrencyCompact(cartTotal) : formatCurrency(cartTotal)}
                   </Text>
                 </View>
               </View>
-              <View style={styles.cartActions}>
+              <View style={[styles.cartActions, width < 400 && styles.cartActionsMobile]}>
                 <IconButton
                   icon="delete-outline"
-                  size={24}
+                  size={width < 400 ? 20 : 24}
                   onPress={clearCart}
                   iconColor={theme.colors.error}
                   style={styles.deleteButton}
@@ -256,8 +256,10 @@ const POSScreen = ({ navigation }) => {
                   onPress={() => setShowCheckout(true)}
                   style={styles.checkoutButton}
                   icon="cash-register"
+                  compact={width < 400}
+                  labelStyle={width < 400 && styles.checkoutButtonLabelSmall}
                 >
-                  Checkout ({cartItemCount})
+                  {width < 400 ? `Checkout (${cartItemCount})` : `Checkout (${cartItemCount})`}
                 </Button>
               </View>
             </View>
@@ -448,10 +450,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  cartSummaryMobile: {
+    flexDirection: 'column',
+    gap: spacing.sm,
+  },
   cartInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
+  },
+  cartInfoMobile: {
+    gap: spacing.sm,
   },
   cartDetails: {
     gap: spacing.xs / 2,
@@ -467,11 +476,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.xs,
   },
+  cartActionsMobile: {
+    width: '100%',
+    justifyContent: 'space-between',
+  },
   deleteButton: {
     margin: 0,
   },
   checkoutButton: {
     minWidth: 140,
+  },
+  checkoutButtonLabelSmall: {
+    fontSize: 13,
   },
   checkoutModal: {
     margin: spacing.lg,

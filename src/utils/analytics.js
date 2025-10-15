@@ -137,6 +137,34 @@ export const formatCurrency = (amount) => {
   return `$${amount.toFixed(2)}`;
 };
 
+// Format large numbers with abbreviations (k, M, B)
+export const formatNumber = (num) => {
+  if (num >= 1000000000) {
+    return (num / 1000000000).toFixed(1) + 'B';
+  }
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M';
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'k';
+  }
+  return num.toString();
+};
+
+// Format currency with abbreviations for large amounts
+export const formatCurrencyCompact = (amount) => {
+  if (amount >= 1000000000) {
+    return `$${(amount / 1000000000).toFixed(1)}B`;
+  }
+  if (amount >= 1000000) {
+    return `$${(amount / 1000000).toFixed(1)}M`;
+  }
+  if (amount >= 10000) {
+    return `$${(amount / 1000).toFixed(1)}k`;
+  }
+  return `$${amount.toFixed(2)}`;
+};
+
 // Format date
 export const formatDate = (dateString) => {
   const date = new Date(dateString);
